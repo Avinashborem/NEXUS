@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+token.pickle
+credentials.json
+config.py
+nexus_memory.db
+*.png
+.env
