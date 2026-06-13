@@ -1,4 +1,4 @@
-# core/brain.py — NEXUS Brain v6 (Full Agent)
+# core/brain.py — NEXUS Brain v7 (Complete)
 import sys, os, json, re
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from groq import Groq
@@ -45,7 +45,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "open_chrome_profile",
-            "description": "Opens Chrome with a specific profile. Use profile nicknames: personal, placement, second, visionary, guest.",
+            "description": "Opens Chrome with a specific profile. Nicknames: personal, placement, second, visionary, guest.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -113,7 +113,7 @@ TOOLS = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "time_str": {"type": "string", "description": "Alarm time e.g. '5:30 PM', '09:00 AM'"}
+                    "time_str": {"type": "string", "description": "Alarm time e.g. 5:30 PM, 09:00 AM"}
                 },
                 "required": ["time_str"]
             }
@@ -272,11 +272,11 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "send_email",
-            "description": "Sends an email via Gmail. For known contacts use their name: bittu, myself, college.",
+            "description": "Sends an email via Gmail. Known contacts: bittu, myself, college.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "to":      {"type": "string", "description": "Recipient name or email address"},
+                    "to":      {"type": "string", "description": "Recipient name or email"},
                     "subject": {"type": "string", "description": "Email subject"},
                     "body":    {"type": "string", "description": "Email body"}
                 },
@@ -302,7 +302,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "read_screen",
-            "description": "NEXUS reads what is currently visible on the screen — active window, text, UI elements.",
+            "description": "NEXUS reads what is currently visible on the screen using AI vision.",
             "parameters": {"type": "object", "properties": {}}
         }
     },
@@ -310,11 +310,11 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "click_on_text",
-            "description": "Finds text visible on screen and clicks it. Use for buttons, links, menu items.",
+            "description": "Finds text on screen using AI vision and clicks it.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "text": {"type": "string", "description": "Exact text to find and click on screen"}
+                    "text": {"type": "string", "description": "Text or element to find and click"}
                 },
                 "required": ["text"]
             }
@@ -338,7 +338,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "right_click_text",
-            "description": "Right-clicks on text found on screen to open context menu.",
+            "description": "Right-clicks on text found on screen.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -368,7 +368,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "focus_window",
-            "description": "Brings a specific window to front and focuses it.",
+            "description": "Brings a specific window to front.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -397,12 +397,12 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "play_music",
-            "description": "Plays a song on Spotify or YouTube. If user says 'on Spotify' set platform=spotify. If user says 'on YouTube' set platform=youtube. If no platform mentioned and Spotify is installed, default to spotify. Always pass the platform explicitly.",
+            "description": "Plays a song on Spotify or YouTube. If user says on Spotify set platform=spotify. If user says on YouTube set platform=youtube. Default is spotify if installed.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "query":    {"type": "string", "description": "Song name or artist to search"},
-                    "platform": {"type": "string", "description": "youtube or spotify, default youtube"}
+                    "query":    {"type": "string", "description": "Song name or artist"},
+                    "platform": {"type": "string", "description": "spotify or youtube"}
                 },
                 "required": ["query"]
             }
@@ -412,12 +412,11 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "control_music",
-            "description": "Controls music playback — pause, next, previous, volume up, volume down, mute, stop.",
+            "description": "Controls music playback.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "action": {"type": "string",
-                               "description": "One of: pause, next, previous, volume_up, volume_down, mute, stop"}
+                    "action": {"type": "string", "description": "pause, resume, next, previous, volume_up, volume_down, mute, stop"}
                 },
                 "required": ["action"]
             }
@@ -427,12 +426,12 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "list_files",
-            "description": "Lists files in a folder like desktop, documents, downloads.",
+            "description": "Lists files in desktop, documents, or downloads.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "folder":    {"type": "string", "description": "desktop, documents, or downloads"},
-                    "extension": {"type": "string", "description": "Filter by extension e.g. .pdf .txt"}
+                    "extension": {"type": "string", "description": "Filter by extension e.g. .pdf"}
                 },
                 "required": []
             }
@@ -442,11 +441,11 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "open_file",
-            "description": "Opens a file by name from a folder.",
+            "description": "Opens a file by name.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "filename": {"type": "string", "description": "File name to open"},
+                    "filename": {"type": "string", "description": "File name"},
                     "folder":   {"type": "string", "description": "desktop, documents, or downloads"}
                 },
                 "required": ["filename"]
@@ -457,7 +456,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "search_files",
-            "description": "Searches for files matching a name across folders.",
+            "description": "Searches for files by name.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -472,7 +471,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "read_pdf",
-            "description": "Reads and summarizes content from a PDF file.",
+            "description": "Reads and summarizes a PDF file.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -491,7 +490,7 @@ TOOLS = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "filename": {"type": "string", "description": "Filename to read"},
+                    "filename": {"type": "string", "description": "Filename"},
                     "folder":   {"type": "string", "description": "desktop, documents, or downloads"}
                 },
                 "required": ["filename"]
@@ -502,7 +501,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "delete_file",
-            "description": "Deletes a file from a folder.",
+            "description": "Deletes a file.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -517,7 +516,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "move_file",
-            "description": "Moves a file from one folder to another.",
+            "description": "Moves a file between folders.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -537,7 +536,7 @@ TOOLS = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "folder_name": {"type": "string", "description": "Name of new folder"},
+                    "folder_name": {"type": "string", "description": "Folder name"},
                     "location":    {"type": "string", "description": "desktop or documents"}
                 },
                 "required": ["folder_name"]
@@ -548,12 +547,12 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "get_recent_files",
-            "description": "Gets recently modified files from a folder.",
+            "description": "Gets recently modified files.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "folder": {"type": "string", "description": "desktop, documents, or downloads"},
-                    "count":  {"type": "integer", "description": "Number of files to return"}
+                    "count":  {"type": "integer", "description": "Number of files"}
                 },
                 "required": []
             }
@@ -589,7 +588,7 @@ TOOLS = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "contact": {"type": "string", "description": "Contact name to message"},
+                    "contact": {"type": "string", "description": "Contact name"},
                     "message": {"type": "string", "description": "Message to send"}
                 },
                 "required": ["contact", "message"]
@@ -600,7 +599,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "open_whatsapp_chat",
-            "description": "Opens a WhatsApp chat with a specific contact.",
+            "description": "Opens WhatsApp chat with a contact.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -614,7 +613,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "read_whatsapp",
-            "description": "Reads latest WhatsApp messages from a chat or lists recent chats.",
+            "description": "Reads latest WhatsApp messages.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -628,12 +627,11 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "manage_startup",
-            "description": "Enable or disable NEXUS auto-startup when Windows boots.",
+            "description": "Enable or disable NEXUS auto-startup on Windows boot.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "action": {"type": "string",
-                               "description": "enable, disable, or check"}
+                    "action": {"type": "string", "description": "enable, disable, or check"}
                 },
                 "required": ["action"]
             }
@@ -643,7 +641,69 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "daily_summary",
-            "description": "Gives a morning/daily briefing with weather, time, battery and system status.",
+            "description": "Morning briefing with weather, time, battery and system status.",
+            "parameters": {"type": "object", "properties": {}}
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_todays_events",
+            "description": "Gets all events scheduled for today from Google Calendar.",
+            "parameters": {"type": "object", "properties": {}}
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_upcoming_events",
+            "description": "Gets upcoming calendar events for the next few days.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "days": {"type": "integer", "description": "Number of days ahead, default 7"}
+                },
+                "required": []
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "create_event",
+            "description": "Creates a new event in Google Calendar.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "title":         {"type": "string", "description": "Event title"},
+                    "date_str":      {"type": "string", "description": "Date e.g. today, tomorrow, 15 June"},
+                    "time_str":      {"type": "string", "description": "Time e.g. 3:00 PM"},
+                    "duration_mins": {"type": "integer", "description": "Duration in minutes, default 60"},
+                    "description":   {"type": "string", "description": "Event description"}
+                },
+                "required": ["title", "date_str"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "delete_event",
+            "description": "Deletes a calendar event by title.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "title": {"type": "string", "description": "Event title to delete"}
+                },
+                "required": ["title"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_next_event",
+            "description": "Gets the very next upcoming calendar event.",
             "parameters": {"type": "object", "properties": {}}
         }
     },
@@ -679,9 +739,8 @@ def execute_tool(tool_name, tool_args):
     def _send_email():
         from skills.email_skill import send_email
         from config import CONTACTS
-        to = tool_args.get("to", "")
-        to = CONTACTS.get(to.lower(), to)
-        return send_email(to, tool_args.get("subject", ""), tool_args.get("body", ""))
+        to = CONTACTS.get(tool_args.get("to","").lower(), tool_args.get("to",""))
+        return send_email(to, tool_args.get("subject",""), tool_args.get("body",""))
 
     def _read_email_body():
         from skills.email_skill import get_email_body
@@ -693,15 +752,15 @@ def execute_tool(tool_name, tool_args):
 
     def _click_text():
         from skills.vision import click_on_text
-        return click_on_text(tool_args.get("text", ""))
+        return click_on_text(tool_args.get("text",""))
 
     def _double_click():
         from skills.vision import double_click_on_text
-        return double_click_on_text(tool_args.get("text", ""))
+        return double_click_on_text(tool_args.get("text",""))
 
     def _right_click():
         from skills.vision import right_click_on_text
-        return right_click_on_text(tool_args.get("text", ""))
+        return right_click_on_text(tool_args.get("text",""))
 
     def _get_active():
         from skills.vision import get_active_window
@@ -711,32 +770,145 @@ def execute_tool(tool_name, tool_args):
         from skills.vision import get_all_windows
         return get_all_windows()
 
-    def _focus_window():
+    def _focus_win():
         from skills.vision import focus_window
-        return focus_window(tool_args.get("title", ""))
+        return focus_window(tool_args.get("title",""))
 
     def _scroll():
         from skills.vision import scroll
-        return scroll(tool_args.get("direction", "down"), tool_args.get("amount", 3))
+        return scroll(tool_args.get("direction","down"), tool_args.get("amount", 3))
+
+    def _play_music():
+        from skills.music import play_music
+        return play_music(tool_args.get("query",""), tool_args.get("platform","auto"))
+
+    def _control_music():
+        from skills.music import (pause_resume, next_track, prev_track,
+                                   volume_up, volume_down, mute, stop_music)
+        actions = {
+            "pause":       pause_resume,
+            "resume":      pause_resume,
+            "next":        next_track,
+            "previous":    prev_track,
+            "volume_up":   volume_up,
+            "volume_down": volume_down,
+            "mute":        mute,
+            "stop":        stop_music,
+        }
+        fn = actions.get(tool_args.get("action","pause"), pause_resume)
+        return fn()
+
+    def _list_files():
+        from skills.file_manager import list_files
+        return list_files(tool_args.get("folder","desktop"), tool_args.get("extension"))
+
+    def _open_file():
+        from skills.file_manager import open_file
+        return open_file(tool_args.get("filename",""), tool_args.get("folder","desktop"))
+
+    def _search_files():
+        from skills.file_manager import search_files
+        return search_files(tool_args.get("query",""), tool_args.get("location","desktop"))
+
+    def _read_pdf():
+        from skills.file_manager import read_pdf
+        return read_pdf(tool_args.get("filename",""), tool_args.get("folder","desktop"))
+
+    def _read_text():
+        from skills.file_manager import read_text_file
+        return read_text_file(tool_args.get("filename",""), tool_args.get("folder","desktop"))
+
+    def _delete_file():
+        from skills.file_manager import delete_file
+        return delete_file(tool_args.get("filename",""), tool_args.get("folder","desktop"))
+
+    def _move_file():
+        from skills.file_manager import move_file
+        return move_file(tool_args.get("filename",""),
+                         tool_args.get("from_folder","downloads"),
+                         tool_args.get("to_folder","desktop"))
+
+    def _create_folder():
+        from skills.file_manager import create_folder
+        return create_folder(tool_args.get("folder_name",""), tool_args.get("location","desktop"))
+
+    def _recent_files():
+        from skills.file_manager import get_recent_files
+        return get_recent_files(tool_args.get("folder","downloads"), tool_args.get("count",5))
+
+    def _open_folder():
+        from skills.file_manager import open_folder
+        return open_folder(tool_args.get("folder","desktop"))
+
+    def _disk_usage():
+        from skills.file_manager import get_disk_usage
+        return get_disk_usage()
+
+    def _send_whatsapp():
+        from skills.whatsapp import send_whatsapp
+        return send_whatsapp(tool_args.get("contact",""), tool_args.get("message",""))
+
+    def _open_whatsapp():
+        from skills.whatsapp import open_whatsapp_chat
+        return open_whatsapp_chat(tool_args.get("contact",""))
+
+    def _read_whatsapp():
+        from skills.whatsapp import read_whatsapp_messages
+        return read_whatsapp_messages(tool_args.get("contact"))
+
+    def _manage_startup():
+        from skills.startup import enable_startup, disable_startup, check_startup
+        action = tool_args.get("action","check")
+        return {"enable": enable_startup, "disable": disable_startup,
+                "check": check_startup}.get(action, check_startup)()
+
+    def _daily_summary():
+        from skills.proactive import get_daily_summary
+        return get_daily_summary()
+
+    def _todays_events():
+        from skills.calendar_skill import get_todays_events
+        return get_todays_events()
+
+    def _upcoming_events():
+        from skills.calendar_skill import get_upcoming_events
+        return get_upcoming_events(tool_args.get("days", 7))
+
+    def _create_event():
+        from skills.calendar_skill import create_event
+        return create_event(
+            tool_args.get("title",""),
+            tool_args.get("date_str","today"),
+            tool_args.get("time_str"),
+            tool_args.get("duration_mins", 60),
+            tool_args.get("description",""))
+
+    def _delete_event():
+        from skills.calendar_skill import delete_event
+        return delete_event(tool_args.get("title",""))
+
+    def _next_event():
+        from skills.calendar_skill import get_next_event
+        return get_next_event()
 
     actions = {
-        "open_application":    lambda: open_app(tool_args.get("app_name", "")),
-        "open_chrome_profile": lambda: open_chrome_profile(tool_args.get("profile_name", "personal")),
-        "open_website":        lambda: open_website(tool_args.get("url", "")),
-        "search_web":          lambda: search_web(tool_args.get("query", "")),
+        "open_application":    lambda: open_app(tool_args.get("app_name","")),
+        "open_chrome_profile": lambda: open_chrome_profile(tool_args.get("profile_name","personal")),
+        "open_website":        lambda: open_website(tool_args.get("url","")),
+        "search_web":          lambda: search_web(tool_args.get("query","")),
         "get_weather":         lambda: get_weather(tool_args.get("city")),
         "tell_time":           lambda: f"It's {datetime.now().strftime('%I:%M %p')} on {datetime.now().strftime('%A, %B %d %Y')}.",
-        "set_alarm":           lambda: set_alarm(tool_args.get("time_str", "")),
+        "set_alarm":           lambda: set_alarm(tool_args.get("time_str","")),
         "set_timer":           lambda: set_timer(tool_args.get("minutes", 5)),
         "get_battery":         lambda: get_battery(),
         "get_system_info":     lambda: get_system_info(),
         "take_screenshot":     lambda: take_screenshot(),
         "get_clipboard":       lambda: get_clipboard(),
-        "type_text":           lambda: type_text(tool_args.get("text", "")),
-        "press_key":           lambda: press_key(tool_args.get("key", "")),
-        "create_file":         lambda: create_file(tool_args.get("filename", "notes.txt"), tool_args.get("content", "")),
-        "kill_process":        lambda: kill_process(tool_args.get("process_name", "")),
-        "remember_fact":       lambda: save_user_fact(tool_args.get("key", ""), tool_args.get("value", "")),
+        "type_text":           lambda: type_text(tool_args.get("text","")),
+        "press_key":           lambda: press_key(tool_args.get("key","")),
+        "create_file":         lambda: create_file(tool_args.get("filename","notes.txt"), tool_args.get("content","")),
+        "kill_process":        lambda: kill_process(tool_args.get("process_name","")),
+        "remember_fact":       lambda: save_user_fact(tool_args.get("key",""), tool_args.get("value","")),
         "shutdown_pc":         lambda: shutdown_pc(),
         "restart_pc":          lambda: restart_pc(),
         "read_emails":         _read_emails,
@@ -748,41 +920,31 @@ def execute_tool(tool_name, tool_args):
         "right_click_text":    _right_click,
         "get_active_window":   _get_active,
         "get_all_windows":     _get_all_windows,
-        "focus_window":        _focus_window,
+        "focus_window":        _focus_win,
         "scroll_screen":       _scroll,
-        "play_music":    lambda: __import__('skills.music', fromlist=['play_on_youtube','play_spotify']).play_spotify(tool_args.get("query","")) if tool_args.get("platform","youtube")=="spotify" else __import__('skills.music', fromlist=['play_youtube_direct']).play_youtube_direct(tool_args.get("query","")),
-        "control_music": lambda: {
-            "pause":       __import__('skills.music', fromlist=['pause_spotify']).pause_spotify,
-            "next":        __import__('skills.music', fromlist=['next_track']).next_track,
-            "previous":    __import__('skills.music', fromlist=['prev_track']).prev_track,
-            "volume_up":   __import__('skills.music', fromlist=['volume_up']).volume_up,
-            "volume_down": __import__('skills.music', fromlist=['volume_down']).volume_down,
-            "mute":        __import__('skills.music', fromlist=['mute']).mute,
-            "stop":        __import__('skills.music', fromlist=['stop_music']).stop_music,
-        }.get(tool_args.get("action","pause"), lambda: "Unknown action")(),
-        "list_files":     lambda: __import__('skills.file_manager', fromlist=['list_files']).list_files(tool_args.get("folder","desktop"), tool_args.get("extension")),
-        "open_file":      lambda: __import__('skills.file_manager', fromlist=['open_file']).open_file(tool_args.get("filename",""), tool_args.get("folder","desktop")),
-        "search_files":   lambda: __import__('skills.file_manager', fromlist=['search_files']).search_files(tool_args.get("query",""), tool_args.get("location","desktop")),
-        "read_pdf":       lambda: __import__('skills.file_manager', fromlist=['read_pdf']).read_pdf(tool_args.get("filename",""), tool_args.get("folder","desktop")),
-        "read_text_file": lambda: __import__('skills.file_manager', fromlist=['read_text_file']).read_text_file(tool_args.get("filename",""), tool_args.get("folder","desktop")),
-        "delete_file":    lambda: __import__('skills.file_manager', fromlist=['delete_file']).delete_file(tool_args.get("filename",""), tool_args.get("folder","desktop")),
-        "move_file":      lambda: __import__('skills.file_manager', fromlist=['move_file']).move_file(tool_args.get("filename",""), tool_args.get("from_folder","downloads"), tool_args.get("to_folder","desktop")),
-        "create_folder":  lambda: __import__('skills.file_manager', fromlist=['create_folder']).create_folder(tool_args.get("folder_name",""), tool_args.get("location","desktop")),
-        "get_recent_files":lambda: __import__('skills.file_manager', fromlist=['get_recent_files']).get_recent_files(tool_args.get("folder","downloads"), tool_args.get("count",5)),
-        "open_folder":    lambda: __import__('skills.file_manager', fromlist=['open_folder']).open_folder(tool_args.get("folder","desktop")),
-        "get_disk_usage": lambda: __import__('skills.file_manager', fromlist=['get_disk_usage']).get_disk_usage(),
-        "send_whatsapp":    lambda: __import__('skills.whatsapp', fromlist=['send_whatsapp']).send_whatsapp(
-                                tool_args.get("contact",""), tool_args.get("message","")),
-        "open_whatsapp_chat":lambda: __import__('skills.whatsapp', fromlist=['open_whatsapp_chat']).open_whatsapp_chat(
-                                tool_args.get("contact","")),
-        "read_whatsapp":    lambda: __import__('skills.whatsapp', fromlist=['read_whatsapp_messages']).read_whatsapp_messages(
-                                tool_args.get("contact")),
-        "manage_startup": lambda: {
-            "enable":  __import__('skills.startup', fromlist=['enable_startup']).enable_startup,
-            "disable": __import__('skills.startup', fromlist=['disable_startup']).disable_startup,
-            "check":   __import__('skills.startup', fromlist=['check_startup']).check_startup,
-        }.get(tool_args.get("action","check"), lambda: "Unknown action")(),
-        "daily_summary": lambda: __import__('skills.proactive', fromlist=['get_daily_summary']).get_daily_summary(),
+        "play_music":          _play_music,
+        "control_music":       _control_music,
+        "list_files":          _list_files,
+        "open_file":           _open_file,
+        "search_files":        _search_files,
+        "read_pdf":            _read_pdf,
+        "read_text_file":      _read_text,
+        "delete_file":         _delete_file,
+        "move_file":           _move_file,
+        "create_folder":       _create_folder,
+        "get_recent_files":    _recent_files,
+        "open_folder":         _open_folder,
+        "get_disk_usage":      _disk_usage,
+        "send_whatsapp":       _send_whatsapp,
+        "open_whatsapp_chat":  _open_whatsapp,
+        "read_whatsapp":       _read_whatsapp,
+        "manage_startup":      _manage_startup,
+        "daily_summary":       _daily_summary,
+        "get_todays_events":   _todays_events,
+        "get_upcoming_events": _upcoming_events,
+        "create_event":        _create_event,
+        "delete_event":        _delete_event,
+        "get_next_event":      _next_event,
     }
 
     fn = actions.get(tool_name)
@@ -793,12 +955,11 @@ def ask_brain(user_input):
     track_command(user_input)
     save_message("user", user_input)
 
-    history = get_recent_history(20)
-    facts   = get_memory_summary()
-    system  = SYSTEM_PROMPT + (f"\n\n{facts}" if facts else "")
+    history  = get_recent_history(20)
+    facts    = get_memory_summary()
+    system   = SYSTEM_PROMPT + (f"\n\n{facts}" if facts else "")
     messages = [{"role": "system", "content": system}] + history
 
-    # First pass — tool decision
     try:
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
@@ -815,18 +976,30 @@ def ask_brain(user_input):
             match = re2.search(r'try again in (\d+)m', err)
             wait  = f"{match.group(1)} minutes" if match else "a few minutes"
             raise Exception(f"Rate limit reached. Please wait {wait} and try again.")
+        if "tool_use_failed" in err or "tool call validation" in err:
+            try:
+                fallback = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=messages,
+                    max_tokens=200,
+                    temperature=0.7
+                )
+                reply = clean_response(fallback.choices[0].message.content)
+                save_message("assistant", reply)
+                return reply
+            except:
+                raise Exception("I had trouble with that, sir. Try rephrasing.")
         raise Exception(f"Groq API error: {e}")
 
     message = response.choices[0].message
 
     if message.tool_calls:
         save_message("assistant", message.content or "")
-
         tool_results = []
         for tc in message.tool_calls:
             tool_name = tc.function.name
             raw_args  = tc.function.arguments
-            tool_args = json.loads(raw_args) if raw_args and raw_args.strip() not in ("", "null", "{}") else {}
+            tool_args = json.loads(raw_args) if raw_args and raw_args.strip() not in ("","null","{}") else {}
             print(f"⚡ Tool: {tool_name} | Args: {tool_args}")
             try:
                 result = execute_tool(tool_name, tool_args)
@@ -842,16 +1015,14 @@ def ask_brain(user_input):
         tool_call_msg = {
             "role": "assistant",
             "content": message.content or "",
-            "tool_calls": [
-                {
-                    "id": tc.id,
-                    "type": "function",
-                    "function": {
-                        "name": tc.function.name,
-                        "arguments": tc.function.arguments
-                    }
-                } for tc in message.tool_calls
-            ]
+            "tool_calls": [{
+                "id": tc.id,
+                "type": "function",
+                "function": {
+                    "name": tc.function.name,
+                    "arguments": tc.function.arguments
+                }
+            } for tc in message.tool_calls]
         }
         messages2 = [{"role": "system", "content": system}] + history + [tool_call_msg] + tool_results
 
@@ -863,7 +1034,7 @@ def ask_brain(user_input):
                 temperature=0.75
             )
             reply = clean_response(final.choices[0].message.content)
-        except Exception as e:
+        except:
             reply = "Done, sir."
     else:
         reply = clean_response(message.content)
