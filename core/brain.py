@@ -397,7 +397,7 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "play_music",
-            "description": "Plays a song or searches for music. Opens YouTube or Spotify.",
+            "description": "Plays a song on Spotify or YouTube. If user says 'on Spotify' set platform=spotify. If user says 'on YouTube' set platform=youtube. If no platform mentioned and Spotify is installed, default to spotify. Always pass the platform explicitly.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -581,6 +581,72 @@ TOOLS = [
             "parameters": {"type": "object", "properties": {}}
         }
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "send_whatsapp",
+            "description": "Sends a WhatsApp message to a contact.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "contact": {"type": "string", "description": "Contact name to message"},
+                    "message": {"type": "string", "description": "Message to send"}
+                },
+                "required": ["contact", "message"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "open_whatsapp_chat",
+            "description": "Opens a WhatsApp chat with a specific contact.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "contact": {"type": "string", "description": "Contact name"}
+                },
+                "required": ["contact"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "read_whatsapp",
+            "description": "Reads latest WhatsApp messages from a chat or lists recent chats.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "contact": {"type": "string", "description": "Contact name, optional"}
+                },
+                "required": []
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "manage_startup",
+            "description": "Enable or disable NEXUS auto-startup when Windows boots.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action": {"type": "string",
+                               "description": "enable, disable, or check"}
+                },
+                "required": ["action"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "daily_summary",
+            "description": "Gives a morning/daily briefing with weather, time, battery and system status.",
+            "parameters": {"type": "object", "properties": {}}
+        }
+    },
 ]
 
 
@@ -705,6 +771,18 @@ def execute_tool(tool_name, tool_args):
         "get_recent_files":lambda: __import__('skills.file_manager', fromlist=['get_recent_files']).get_recent_files(tool_args.get("folder","downloads"), tool_args.get("count",5)),
         "open_folder":    lambda: __import__('skills.file_manager', fromlist=['open_folder']).open_folder(tool_args.get("folder","desktop")),
         "get_disk_usage": lambda: __import__('skills.file_manager', fromlist=['get_disk_usage']).get_disk_usage(),
+        "send_whatsapp":    lambda: __import__('skills.whatsapp', fromlist=['send_whatsapp']).send_whatsapp(
+                                tool_args.get("contact",""), tool_args.get("message","")),
+        "open_whatsapp_chat":lambda: __import__('skills.whatsapp', fromlist=['open_whatsapp_chat']).open_whatsapp_chat(
+                                tool_args.get("contact","")),
+        "read_whatsapp":    lambda: __import__('skills.whatsapp', fromlist=['read_whatsapp_messages']).read_whatsapp_messages(
+                                tool_args.get("contact")),
+        "manage_startup": lambda: {
+            "enable":  __import__('skills.startup', fromlist=['enable_startup']).enable_startup,
+            "disable": __import__('skills.startup', fromlist=['disable_startup']).disable_startup,
+            "check":   __import__('skills.startup', fromlist=['check_startup']).check_startup,
+        }.get(tool_args.get("action","check"), lambda: "Unknown action")(),
+        "daily_summary": lambda: __import__('skills.proactive', fromlist=['get_daily_summary']).get_daily_summary(),
     }
 
     fn = actions.get(tool_name)

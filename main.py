@@ -9,6 +9,10 @@ from output.gui import NexusHUD
 hud = None
 
 def voice_loop():
+    # Start proactive monitoring
+    from skills.proactive import start_proactive
+    start_proactive(speak)
+
     speak("NEXUS online. All systems ready, sir.")
     hud.root.after(0, lambda: hud.add_message("nexus", "NEXUS online. All systems ready, sir."))
 
@@ -73,7 +77,7 @@ def run():
     t = threading.Thread(target=voice_loop, daemon=True)
     t.start()
 
-    # HUD mainloop runs on main thread — this blocks until window closes
+    # HUD mainloop blocks on main thread
     hud.root.mainloop()
 
 if __name__ == "__main__":
